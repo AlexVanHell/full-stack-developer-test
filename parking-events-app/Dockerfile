@@ -2,8 +2,8 @@ FROM laraveldev/php
 
 WORKDIR /app
 
-COPY ./composer.json ./composer.json
+COPY ./composer.json .
 
-RUN composer require
+RUN composer install
 
 EXPOSE 8080

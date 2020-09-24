@@ -8,4 +8,5 @@ Copy `mongo-root.example` into new file `mongo-root`
 $ cp ./mongo-root.example ./mongo-root
 ```
 
-Then change the values you want
+Then change the values you want for your mongo credentials
+

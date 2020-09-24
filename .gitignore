@@ -1,3 +1,16 @@
+# Database setup file
 mongo-root
 
-data/
+# Docker shared volumes
+.docker/*
+!.docker/mongodb/initdb.d/create-app-user.sh
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Environment variables
+.env

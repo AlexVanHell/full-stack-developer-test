@@ -1,20 +1,25 @@
-version: '3'
-networks:
-  db:
+version: '3.5'
 
 services:
   database:
-    image: mongo:3.6
+    image: mongo:4.4
+    container_name: parking-app-db
+    env_file:
+      - ./.env
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: mongo_password
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     ports:
-      - '27017-270129:27017-27019'
+      - '27017:27017'
     volumes:
-      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
-      - ./data:/data/db
+      - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
+      - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
+      - ./.docker/mongodb/data/db/:/data/db/
+      - ./.docker/mongodb/data/log/:/var/log/mongodb/
+    command: ['-f', '/etc/mongod.conf']
   admin-app:
-    dockerfile: ./parking-admin-app/Dockerfile
+    build: ./parking-admin-app
     container_name: parking-admin-app
     working_dir: /app
     ports:
@@ -22,12 +27,17 @@ services:
     volumes:
       - ./parking-admin-app:/app
       - /app/node_modules
+    links:
+      - 'database:database'
   events-app:
-    dockerfile: ./parking-events-app/Dockerfile
+    build: ./parking-events-app
     container_name: parking-events-app
     working_dir: /app
+    ports:
+      - '8080:8080'
     volumes:
       - ./parking-events-app:/app
       - /app/vendor
-      ports:
-        - '8080:8080'
+      - /app/node_modules
+    links:
+      - 'database:database'
