@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { FilterQuery, Model, mongo } from 'mongoose';
+import { ApiException } from '../api-exception/api-exception';
 import { BaseDocument } from '../document/base.document';
 import { SimpleCrudServiceInterface } from './simple-crud.service.interface';
 
@@ -28,7 +30,7 @@ export abstract class SimpleCrudService<D extends BaseDocument>
 		const find = await this.getById(id);
 
 		if (!find) {
-			throw new Error('Document not found');
+			throw new ApiException(HttpStatus.NOT_FOUND, this.getNotFoundError());
 		}
 
 		const updated = { ...data, updatedAt: new Date() };
@@ -41,12 +43,16 @@ export abstract class SimpleCrudService<D extends BaseDocument>
 		const find = await this.getById(id);
 
 		if (!find) {
-			throw new Error('Document not found');
+			throw new ApiException(HttpStatus.NOT_FOUND, this.getNotFoundError());
 		}
 
 		const { _id } = find;
 
 		await this.model.deleteOne({ _id });
 		return _id;
+	}
+
+	public getNotFoundError(): string {
+		return 'NOT_FOUND';
 	}
 }

@@ -11,7 +11,6 @@ export class BasicStrategy extends PassportStrategy(Strategy, 'basic') {
 
 	public async validate(username: string, password: string) {
 		const user = await this.authService.validateUser(username, password);
-
 		return user;
 	}
 }

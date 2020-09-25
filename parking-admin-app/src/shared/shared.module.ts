@@ -4,10 +4,11 @@ import { ApiExceptionFilter } from '../common/api-exception/exception-filter/api
 import { AllExceptionFilter } from '../common/exception-filter/all-exception.filter';
 import { ConfigModule } from '../config/config.module';
 import { DatabaseModule } from '../database/database.module';
+import { AuthModule } from '../module/auth/auth.module';
 
 @Module({
-	imports: [ConfigModule, DatabaseModule],
-	exports: [ConfigModule, DatabaseModule],
+	imports: [ConfigModule, DatabaseModule, AuthModule],
+	exports: [ConfigModule, DatabaseModule, AuthModule],
 	providers: [
 		{
 			provide: APP_FILTER,

@@ -3,7 +3,7 @@ import { ConfigModule } from '../../config/config.module';
 import { ConfigService } from '../../config/service/config.service';
 import { PasswordUtilService } from './password.util.service';
 
-describe.only('PasswordUtilService', () => {
+describe('PasswordUtilService', () => {
 	let service: PasswordUtilService;
 	let configService: ConfigService;
 
@@ -60,8 +60,8 @@ describe.only('PasswordUtilService', () => {
 
 	describe('.generateRandom()', () => {
 		it('should generate random string of size', async () => {
-			const size = 10;
-			const byteSize = 8;
+			const size = 30;
+			const byteSize = 2;
 
 			const result = service.generateRandom(size);
 

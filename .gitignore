@@ -3,7 +3,10 @@ mongo-root
 
 # Docker shared volumes
 .docker/*
-!.docker/mongodb/initdb.d/create-app-user.sh
+!.docker/mongodb/
+.docker/mongodb/data
+!.docker/mongodb/initdb.d/
+!.docker/mongodb/mongo.conf
 
 # IDE - VSCode
 .vscode/*
@@ -14,3 +17,6 @@ mongo-root
 
 # Environment variables
 .env
+
+# System files
+.DS_Store

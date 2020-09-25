@@ -1,4 +1,7 @@
-version: '3.5'
+version: '3.7'
+
+volumes:
+  mongo_data:
 
 services:
   database:
@@ -11,44 +14,57 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
     ports:
-      - '27017:27017'
+      - 27017:27017
     volumes:
       - ./.docker/mongodb/mongod.conf:/etc/mongod.conf
       - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
-      - ./.docker/mongodb/data/db/:/data/db/
+      - mongo_data:/data/db/
       - ./.docker/mongodb/data/log/:/var/log/mongodb/
-    command: ['tail', '-f', '/dev/null']
+    # command: ['-f', '/etc/mongod.conf']
+  nginx:
+    image: nginx:latest
+    container_name: parking-app-nginx
+    ports:
+      - 80:80
+    links:
+      - admin-app
+      - auth-app
+    networks:
+      default:
+        aliases:
+          - ${HOSTNAME}
   admin-app:
     build: ./parking-admin-app
     container_name: parking-admin-app
     working_dir: /app
     ports:
-      - '3000:3000'
+      - 3000:3000
     volumes:
       - ./parking-admin-app:/app
       - /app/node_modules
     links:
-      - 'database:database'
+      - database
+    command: ['yarn', 'start']
   auth-app:
     build: ./parking-auth-app
     container_name: parking-auth-app
     working_dir: /app
     ports:
-      - '3001:3000'
+      - 3001:3000
     volumes:
       - ./parking-auth-app:/app
       - /app/node_modules
-    links:
-      - 'database:database'
-  events-app:
-    build: ./parking-events-app
-    container_name: parking-events-app
-    working_dir: /app
-    ports:
-      - '8080:8080'
-    volumes:
-      - ./parking-events-app:/app
-      - /app/vendor
-      - /app/node_modules
-    links:
-      - 'database:database'
+    command: ['yarn', 'start']
+#  events-app:
+#    build: ./parking-events-app
+#    container_name: parking-events-app
+#    working_dir: /app
+#    ports:
+#      - 8080:8080
+#    volumes:
+#      - ./parking-events-app:/app
+#      - /app/vendor
+#      - /app/node_modules
+#    links:
+#      - database
+#      - auth-app

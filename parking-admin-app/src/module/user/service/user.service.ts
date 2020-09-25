@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { ApiException } from '../../../common/api-exception/api-exception';
 import { SimpleCrudService } from '../../../common/service/simple-crud.service';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDocument } from '../user.schema';
 
 @Injectable()
@@ -16,33 +17,50 @@ export class UserService extends SimpleCrudService<UserDocument> {
 	}
 
 	public async create(data: CreateUserDto) {
-		const findWithUsername = await this.model.findOne({
-			username: data.username,
-		});
-		const findWithEmail = await this.model.findOne({
-			email: data.email,
-		});
-
-		if (findWithUsername) {
-			throw new Error('Username is already in use');
-		}
-
-		if (findWithEmail) {
-			throw new Error('Email is already in use');
-		}
-
+		await this.checkDuplicateUser(data.username, data.email);
 		return super.create(data);
 	}
 
-	public async updateById(id: string, data: CreateUserDto) {
-		const findWithUsername = await this.model.findOne({
-			username: data.username,
-			_id: { $ne: id },
+	public async updateById(id: string, data: UpdateUserDto) {
+		await this.checkDuplicateUser(data.username, data.email, id);
+		return super.updateById(id, data);
+	}
+
+	/**
+	 * Get user by username
+	 * @param username Username to find
+	 * @param id Check with the same id
+	 */
+	public async getByUsername(username: string, id?: string) {
+		return await this.model.findOne({
+			username,
+			...(id ? { _id: { $ne: id } } : {}),
 		});
-		const findWithEmail = await this.model.findOne({
-			email: data.email,
-			_id: { $ne: id },
+	}
+
+	/**
+	 * Get user by email
+	 * @param username Email to find
+	 * @param id Check with the same id
+	 */
+	public async getByEmail(email: string, id?: string) {
+		return this.model.findOne({
+			email,
+			...(id ? { _id: { $ne: id } } : {}),
 		});
+	}
+
+	public getNotFoundError(): string {
+		return 'USER_NOT_FOUND';
+	}
+
+	private async checkDuplicateUser(
+		username: string,
+		email: string,
+		id?: string,
+	) {
+		const findWithUsername = await this.getByUsername(username, id);
+		const findWithEmail = await this.getByEmail(email, id);
 
 		if (findWithUsername) {
 			throw new ApiException(HttpStatus.CONFLICT, 'USER_USERNAME_IN_USE');
@@ -51,7 +69,5 @@ export class UserService extends SimpleCrudService<UserDocument> {
 		if (findWithEmail) {
 			throw new ApiException(HttpStatus.CONFLICT, 'USER_EMAIL_IN_USE');
 		}
-
-		return super.updateById(id, data);
 	}
 }

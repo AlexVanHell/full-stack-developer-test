@@ -31,10 +31,16 @@ export class AuthController {
 		description: 'User information and its token',
 		type: AuthDto,
 	})
-	@ApiExceptionResponse({
-		statusCode: HttpStatus.UNAUTHORIZED,
-		code: 'USER_BAD_CREDENTIALS',
-	})
+	@ApiExceptionResponse(
+		{
+			statusCode: HttpStatus.UNAUTHORIZED,
+			code: 'USER_BAD_CREDENTIALS',
+		},
+		{
+			statusCode: HttpStatus.UNAUTHORIZED,
+			code: 'USER_NO_BASIC_AUTH',
+		},
+	)
 	public async login(@AuthUser() user: UserDto) {
 		const auth = this.service.login(user);
 
@@ -48,16 +54,25 @@ export class AuthController {
 	@ApiOperation({
 		summary: 'Validate jwt token',
 	})
-	@ApiBasicAuth()
 	@ApiResponse({
 		status: HttpStatus.OK,
 		description: 'User information and its token',
-		type: AuthDto,
+		type: AuthUserDto,
 	})
-	@ApiExceptionResponse({
-		statusCode: HttpStatus.UNAUTHORIZED,
-		code: 'USER_UNATHORIZED',
-	})
+	@ApiExceptionResponse(
+		{
+			statusCode: HttpStatus.UNAUTHORIZED,
+			code: 'TOKEN_INVALID',
+		},
+		{
+			statusCode: HttpStatus.UNAUTHORIZED,
+			code: 'TOKEN_EXPIRED',
+		},
+		{
+			statusCode: HttpStatus.UNAUTHORIZED,
+			code: 'TOKEN_NOT_PROVIDED',
+		},
+	)
 	public async validateToken(@AuthUser() user: AuthUserDto) {
 		// In this step the token is already validated thanks to the @Auth decorator
 		// So just return the user decoded

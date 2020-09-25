@@ -59,6 +59,7 @@ export class ConfigService {
 
 		this.env = {
 			debugMode: processEnv['env_debug_mode'] === 'true',
+			dir,
 			db: {
 				host: processEnv['env_db_host'],
 				port: Number(processEnv['env_db_port']),
@@ -67,7 +68,18 @@ export class ConfigService {
 				password: processEnv['env_db_password'],
 				logging: processEnv['env_db_logging'] === 'true',
 			},
-			dir,
+			endpoints: {
+				'auth-app': {
+					host: processEnv['env_endpoints_auth_app_host'],
+					port: processEnv['env_endpoints_auth_app_port'],
+					prefix: processEnv['env_endpoints_auth_app_prefix'],
+				},
+				'events-app': {
+					host: processEnv['env_endpoints_events_app_host'],
+					port: processEnv['env_endpoints_events_app_port'],
+					prefix: processEnv['env_endpoints_events_app_prefix'],
+				},
+			},
 		};
 	}
 

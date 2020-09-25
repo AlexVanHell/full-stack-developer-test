@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtCustomModule } from '../../jwt/jwt-custom.module';
 import { JwtStrategy } from './jwt.strategy';
 
 describe('JwtStrategy', () => {
@@ -7,6 +8,7 @@ describe('JwtStrategy', () => {
 	beforeEach(async () => {
 		const module: TestingModule = await Test.createTestingModule({
 			providers: [JwtStrategy],
+			imports: [JwtCustomModule.forRoot('auth')],
 		}).compile();
 
 		service = module.get<JwtStrategy>(JwtStrategy);

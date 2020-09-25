@@ -60,6 +60,7 @@ export class ConfigService {
 
 		this.env = {
 			debugMode: processEnv['env_debug_mode'] === 'true',
+			dir,
 			password: {
 				saltRounds: Number(processEnv['env_password_salt_rounds']),
 			},
@@ -71,7 +72,18 @@ export class ConfigService {
 				algorithm: processEnv['env_auth_algorith'] as Algorithm,
 				certFilePath: processEnv['env_auth_cert_file_path'],
 			},
-			dir,
+			endpoints: {
+				'admin-app': {
+					host: processEnv['env_endpoints_admin_app_host'],
+					port: processEnv['env_endpoints_admin_app_port'],
+					prefix: processEnv['env_endpoints_admin_app_prefix'],
+				},
+				'events-app': {
+					host: processEnv['env_endpoints_events_app_host'],
+					port: processEnv['env_endpoints_events_app_port'],
+					prefix: processEnv['env_endpoints_events_app_prefix'],
+				},
+			},
 		};
 	}
 

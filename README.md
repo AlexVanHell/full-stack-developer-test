@@ -2,11 +2,18 @@ This is a microservices proyect of Parking control and management App
 
 # Setup Database
 
-Copy `mongo-root.example` into new file `mongo-root`
+Copy `.env.example` into new file `.env`
 
 ```sh
-$ cp ./mongo-root.example ./mongo-root
+$ cp ./.env.example ./.env
 ```
 
 Then change the values you want for your mongo credentials
 
+# Up services
+
+Using docker compose
+
+```sh
+$ docker-compose up -d
+```
