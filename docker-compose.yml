@@ -5,7 +5,7 @@ services:
     image: mongo:4.4
     container_name: parking-app-db
     env_file:
-      - ./.env
+      - .env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -17,7 +17,7 @@ services:
       - ./.docker/mongodb/initdb.d/:/docker-entrypoint-initdb.d/
       - ./.docker/mongodb/data/db/:/data/db/
       - ./.docker/mongodb/data/log/:/var/log/mongodb/
-    command: ['-f', '/etc/mongod.conf']
+    command: ['tail', '-f', '/dev/null']
   admin-app:
     build: ./parking-admin-app
     container_name: parking-admin-app
@@ -26,6 +26,17 @@ services:
       - '3000:3000'
     volumes:
       - ./parking-admin-app:/app
+      - /app/node_modules
+    links:
+      - 'database:database'
+  auth-app:
+    build: ./parking-auth-app
+    container_name: parking-auth-app
+    working_dir: /app
+    ports:
+      - '3001:3000'
+    volumes:
+      - ./parking-auth-app:/app
       - /app/node_modules
     links:
       - 'database:database'
