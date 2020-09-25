@@ -1,6 +1,8 @@
+import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { DatabaseModule } from '../../../database/database.module';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UserDocument } from '../user.schema';
+import { UserDocument, UserSchema } from '../user.schema';
 import { UserService } from './user.service';
 
 const testUser: CreateUserDto = {
@@ -19,17 +21,17 @@ const testUser2: CreateUserDto = {
 	password: 'foo',
 };
 
-describe.only('UserService', () => {
+describe('UserService', () => {
 	let service: UserService;
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const module: TestingModule = await Test.createTestingModule({
-			providers: [
-				UserService,
-				/* {
-					provide: getModelToken(UserDocument.name),
-					useValue: null,
-				}, */
+			providers: [UserService],
+			imports: [
+				MongooseModule.forFeature([
+					{ name: UserDocument.name, schema: UserSchema },
+				]),
+				DatabaseModule,
 			],
 		}).compile();
 
@@ -66,23 +68,19 @@ describe.only('UserService', () => {
 
 		afterEach(async () => {
 			while (createdIds.length) {
-				const last = createdIds.pop();
-				await service.deleteById(last);
+				await service.deleteById(createdIds.pop());
 			}
 		});
 
 		it('should create successfully', async () => {
 			const result = await service.create(testUser);
+			createdIds.push(result._id);
 
 			expect(typeof result).toBe('object');
-			expect(result).toEqual(testUser);
-			expect(result).toMatchObject({
-				createdAt: new Date(),
-				updatedAt: new Date(),
-				active: true,
-			});
-
-			createdIds.push(result._id);
+			expect(result).toMatchObject(testUser);
+			expect(result.createdAt).toBeInstanceOf(Date);
+			expect(result.updatedAt).toBeInstanceOf(Date);
+			expect(typeof result.active).toBe('boolean');
 		});
 
 		it('should throw error if user username or email are already in use', async () => {
@@ -97,6 +95,7 @@ describe.only('UserService', () => {
 					...testUser2,
 					username: testUser.username,
 				});
+				createdIds.push(result._id);
 			} catch (err) {
 				error = err;
 			}
@@ -117,18 +116,16 @@ describe.only('UserService', () => {
 
 		afterEach(async () => {
 			while (createdIds.length) {
-				const last = createdIds.pop();
-				await service.deleteById(last);
+				await service.deleteById(createdIds.pop());
 			}
 		});
 
 		it('should update successfully', async () => {
 			const updated: CreateUserDto = { ...testUser, firstname: 'Test updated' };
-
 			const result = await service.updateById(created._id, updated);
 
-			expect(result).toEqual(updated);
-			expect(result.firstName).toBe('Test updated');
+			expect(result).toEqual(expect.objectContaining(updated));
+			expect(result.firstname).toBe('Test updated');
 		});
 
 		it('should throw error if user username or email are already in use by another user', async () => {
@@ -160,7 +157,7 @@ describe.only('UserService', () => {
 
 		it('should delete successfully', async () => {
 			const result = await service.deleteById(created._id);
-			expect(result).toBe(created._id);
+			expect(result).toStrictEqual(created._id);
 		});
 	});
 });

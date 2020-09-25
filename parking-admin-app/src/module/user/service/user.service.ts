@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, mongo } from 'mongoose';
+import { Model } from 'mongoose';
+import { ApiException } from '../../../common/api-exception/api-exception';
 import { SimpleCrudService } from '../../../common/service/simple-crud.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserDocument } from '../user.schema';
@@ -36,19 +37,19 @@ export class UserService extends SimpleCrudService<UserDocument> {
 	public async updateById(id: string, data: CreateUserDto) {
 		const findWithUsername = await this.model.findOne({
 			username: data.username,
-			_id: { $not: new mongo.ObjectID(id) },
+			_id: { $ne: id },
 		});
 		const findWithEmail = await this.model.findOne({
 			email: data.email,
-			_id: { $not: new mongo.ObjectID(id) },
+			_id: { $ne: id },
 		});
 
 		if (findWithUsername) {
-			throw new Error('Username is already in use by another user');
+			throw new ApiException(HttpStatus.CONFLICT, 'USER_USERNAME_IN_USE');
 		}
 
 		if (findWithEmail) {
-			throw new Error('Email is already in use by another user');
+			throw new ApiException(HttpStatus.CONFLICT, 'USER_EMAIL_IN_USE');
 		}
 
 		return super.updateById(id, data);

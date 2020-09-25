@@ -20,16 +20,22 @@ describe('ConfigService', () => {
 		it('should be get entire config object when no parameters are sent', () => {
 			const obj = service.get();
 
-			expect(Object.keys(obj)).toEqual(expect.arrayContaining(['debugMode', 'db', 'dir']));
+			expect(Object.keys(obj)).toEqual(
+				expect.arrayContaining(['debugMode', 'db', 'dir']),
+			);
 		});
 
 		it('should be get one property when parameter is sent', () => {
-      const obj = service.get('db');
-      const obj2 = service.get('dir');
-      const obj3 = service.get('debugMode');
+			const obj = service.get('db');
+			const obj2 = service.get('dir');
+			const obj3 = service.get('debugMode');
 
-			expect(Object.keys(obj)).toEqual(expect.arrayContaining(['host', 'port', 'database']));
-			expect(Object.keys(obj2)).toEqual(expect.arrayContaining(['root', 'src', 'working']));
+			expect(Object.keys(obj)).toEqual(
+				expect.arrayContaining(['host', 'port', 'database']),
+			);
+			expect(Object.keys(obj2)).toEqual(
+				expect.arrayContaining(['root', 'src', 'working']),
+			);
 			expect(typeof obj3).toBe('boolean');
 		});
 	});

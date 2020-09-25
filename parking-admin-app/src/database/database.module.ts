@@ -9,7 +9,9 @@ import { DatabaseService } from './service/database.service';
 		ConfigModule,
 		MongooseModule.forRootAsync({
 			useClass: DatabaseService,
+			imports: [ConfigModule],
 		}),
 	],
+	exports: [],
 })
 export class DatabaseModule {}

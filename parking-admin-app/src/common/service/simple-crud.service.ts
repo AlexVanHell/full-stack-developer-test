@@ -1,4 +1,4 @@
-import { FilterQuery, Model } from 'mongoose';
+import { FilterQuery, Model, mongo } from 'mongoose';
 import { BaseDocument } from '../document/base.document';
 import { SimpleCrudServiceInterface } from './simple-crud.service.interface';
 
@@ -15,7 +15,12 @@ export abstract class SimpleCrudService<D extends BaseDocument>
 	}
 
 	public async create(data: Partial<D>) {
-		const created = new this.model(data);
+		const created = new this.model({
+			active: true,
+			...data,
+			createdAt: new Date(),
+			updatedAt: new Date(),
+		});
 		return created.save();
 	}
 
@@ -26,10 +31,10 @@ export abstract class SimpleCrudService<D extends BaseDocument>
 			throw new Error('Document not found');
 		}
 
-		const { _id } = find;
+		const updated = { ...data, updatedAt: new Date() };
 
-		const updated = await this.model.updateOne({ _id }, { ...find, ...data });
-		return updated;
+		await this.model.updateOne({ _id: new mongo.ObjectID(id) } as any, updated);
+		return updated as D;
 	}
 
 	public async deleteById(id: string) {
