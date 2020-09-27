@@ -70,14 +70,10 @@ export class ConfigService {
 			},
 			endpoints: {
 				'auth-app': {
-					host: processEnv['env_endpoints_auth_app_host'],
-					port: processEnv['env_endpoints_auth_app_port'],
-					prefix: processEnv['env_endpoints_auth_app_prefix'],
+					url: processEnv['env_endpoints_auth_app_url'],
 				},
 				'events-app': {
-					host: processEnv['env_endpoints_events_app_host'],
-					port: processEnv['env_endpoints_events_app_port'],
-					prefix: processEnv['env_endpoints_events_app_prefix'],
+					url: processEnv['env_endpoints_events_app_url'],
 				},
 			},
 		};

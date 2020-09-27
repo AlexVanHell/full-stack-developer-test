@@ -31,6 +31,8 @@ export class DatabaseService implements MongooseOptionsFactory {
 				user: config.username,
 				password: config.password,
 			},
+			useCreateIndex: true,
+			useNewUrlParser: true,
 		};
 	}
 }

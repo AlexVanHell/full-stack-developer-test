@@ -4,9 +4,13 @@ RUN curl -o- -L https://yarnpkg.com/install.sh | bash
 
 WORKDIR /app
 
-COPY ./package.json .
-COPY ./yarn.lock .
+COPY ./parking-admin-app/package.json .
+COPY ./parking-admin-app/yarn.lock .
 
 RUN yarn install
+
+COPY ./parking-admin-app .
+
+COPY ./.env .
 
 CMD [ "yarn", "start" ]

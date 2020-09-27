@@ -2,8 +2,12 @@ FROM laraveldev/php
 
 WORKDIR /app
 
-COPY ./composer.json .
+COPY ./parking-events-app/composer.json .
 
 RUN composer install
 
-EXPOSE 8080
+COPY ./parking-events-app .
+
+COPY ./.env .
+
+CMD [ "laravel", "start" ]

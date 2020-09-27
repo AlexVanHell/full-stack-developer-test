@@ -74,14 +74,10 @@ export class ConfigService {
 			},
 			endpoints: {
 				'admin-app': {
-					host: processEnv['env_endpoints_admin_app_host'],
-					port: processEnv['env_endpoints_admin_app_port'],
-					prefix: processEnv['env_endpoints_admin_app_prefix'],
+					url: processEnv['env_endpoints_admin_app_url'],
 				},
 				'events-app': {
-					host: processEnv['env_endpoints_events_app_host'],
-					port: processEnv['env_endpoints_events_app_port'],
-					prefix: processEnv['env_endpoints_events_app_prefix'],
+					url: processEnv['env_endpoints_events_app_url'],
 				},
 			},
 		};

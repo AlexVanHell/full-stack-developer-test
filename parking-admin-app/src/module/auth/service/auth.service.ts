@@ -6,12 +6,11 @@ import { AuthUserDto } from '../dto/auth-user.dto';
 
 @Injectable()
 export class AuthService {
-	private readonly authEndpoint: string;
+	private readonly validateEndpoint = '/validate';
+	private readonly authApiUrl: string;
 
 	constructor(configService: ConfigService) {
-		const config = configService.get('endpoints')['auth-app'];
-		this.authEndpoint = `http://${config.host}:${config.port}/${config.prefix ||
-			''}/validate`;
+		this.authApiUrl = configService.get('endpoints')['auth-app'].url;
 	}
 
 	/**
@@ -20,11 +19,14 @@ export class AuthService {
 	 */
 	public async validateToken(token: string) {
 		try {
-			const response = await Axios.get<AuthUserDto>(this.authEndpoint, {
-				headers: {
-					Authorization: token,
+			const response = await Axios.get<AuthUserDto>(
+				`${this.authApiUrl}${this.validateEndpoint}`,
+				{
+					headers: {
+						Authorization: token,
+					},
 				},
-			});
+			);
 
 			return response.data;
 		} catch (err) {

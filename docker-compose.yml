@@ -3,12 +3,15 @@ version: '3.7'
 volumes:
   mongo_data:
 
+networks:
+  main:
+
 services:
   database:
     image: mongo:4.4
     container_name: parking-app-db
     env_file:
-      - .env
+      - ./.env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
@@ -22,49 +25,64 @@ services:
       - ./.docker/mongodb/data/log/:/var/log/mongodb/
     # command: ['-f', '/etc/mongod.conf']
   nginx:
-    image: nginx:latest
+    build: ./nginx
     container_name: parking-app-nginx
     ports:
-      - 80:80
-    links:
-      - admin-app
-      - auth-app
+      - 8000:80
     networks:
-      default:
+      main:
         aliases:
-          - ${HOSTNAME}
+          - nginx
   admin-app:
-    build: ./parking-admin-app
+    build:
+      context: .
+      dockerfile: ./parking-admin-app/Dockerfile
     container_name: parking-admin-app
     working_dir: /app
     ports:
       - 3000:3000
-    volumes:
-      - ./parking-admin-app:/app
-      - /app/node_modules
+    #    volumes:
+    #      - ./parking-admin-app:/app
+    #      - /app/node_modules
     links:
       - database
+    networks:
+      main:
+        aliases:
+          - admin-app
     command: ['yarn', 'start']
   auth-app:
-    build: ./parking-auth-app
+    build:
+      context: .
+      dockerfile: ./parking-auth-app/Dockerfile
     container_name: parking-auth-app
     working_dir: /app
     ports:
       - 3001:3000
-    volumes:
-      - ./parking-auth-app:/app
-      - /app/node_modules
+    networks:
+      main:
+        aliases:
+          - auth-app
+    #    volumes:
+    #      - ./parking-auth-app:/app
+    #      - /app/node_modules
     command: ['yarn', 'start']
-#  events-app:
-#    build: ./parking-events-app
-#    container_name: parking-events-app
-#    working_dir: /app
-#    ports:
-#      - 8080:8080
-#    volumes:
-#      - ./parking-events-app:/app
-#      - /app/vendor
-#      - /app/node_modules
-#    links:
-#      - database
-#      - auth-app
+  events-app:
+    build:
+      context: .
+      dockerfile: ./parking-events-app/Dockerfile
+    container_name: parking-events-app
+    working_dir: /app
+    ports:
+      - 8080:8080
+    #    volumes:
+    #      - ./parking-events-app:/app
+    #      - /app/vendor
+    #      - /app/node_modules
+    links:
+      - database
+    networks:
+      main:
+        aliases:
+          - events-app
+    command: ['laravel', 'start']

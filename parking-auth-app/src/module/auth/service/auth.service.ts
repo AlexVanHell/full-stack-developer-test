@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import Axios from 'axios';
 import { ConfigJwtOptionsInterface } from '../../../config/interface/config-jwt-options.interface';
+import { ConfigService } from '../../../config/service/config.service';
 import { DateUtilService } from '../../../util/date/date-util.service';
 import { PasswordUtilService } from '../../../util/password/password.util.service';
 import { UserDto } from '../../user/dto/user.dto';
@@ -9,15 +10,19 @@ import { AuthDto } from '../dto/auth.dto';
 
 @Injectable()
 export class AuthService {
-	private readonly usersEndpoint = '/users';
+	private readonly adminApiUrl: string;
+	private readonly usersEndpoint = '/user/auth';
 
 	constructor(
+		configService: ConfigService,
 		private readonly jwtService: JwtService,
 		private readonly passwordUtil: PasswordUtilService,
 		private readonly dateUtil: DateUtilService,
 		@Inject('authJwtOptions')
 		private readonly jwtOptions: ConfigJwtOptionsInterface,
-	) {}
+	) {
+		this.adminApiUrl = configService.get('endpoints')['admin-app'].url;
+	}
 
 	/**
 	 * Validate user
@@ -27,7 +32,7 @@ export class AuthService {
 	 */
 	public async validateUser(username: string, password: string) {
 		const response = await Axios.get<UserDto>(
-			`${''}${this.usersEndpoint}/${username}`,
+			`${this.adminApiUrl}${this.usersEndpoint}/${username}`,
 			{
 				params: {
 					password: 'true',
