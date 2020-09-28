@@ -67,22 +67,22 @@ services:
     #      - ./parking-auth-app:/app
     #      - /app/node_modules
     command: ['yarn', 'start']
-  events-app:
-    build:
-      context: .
-      dockerfile: ./parking-events-app/Dockerfile
-    container_name: parking-events-app
-    working_dir: /app
-    ports:
-      - 8080:8080
-    #    volumes:
-    #      - ./parking-events-app:/app
-    #      - /app/vendor
-    #      - /app/node_modules
-    links:
-      - database
-    networks:
-      main:
-        aliases:
-          - events-app
-    command: ['laravel', 'start']
+#  events-app:
+#    build:
+#      context: .
+#      dockerfile: ./parking-events-app/Dockerfile
+#    container_name: parking-events-app
+#    working_dir: /app
+#    ports:
+#      - 8080:8080
+#    volumes:
+#      - ./parking-events-app:/app
+#      - /app/vendor
+#      - /app/node_modules
+#    links:
+#      - database
+#    networks:
+#      main:
+#        aliases:
+#          - events-app
+#    command: ['laravel', 'start']

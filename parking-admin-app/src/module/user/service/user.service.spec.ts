@@ -2,6 +2,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { DatabaseModule } from '../../../database/database.module';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { UserRoleEnum } from '../user-role.enum';
 import { UserDocument, UserSchema } from '../user.schema';
 import { UserService } from './user.service';
 
@@ -11,6 +12,7 @@ const testUser: CreateUserDto = {
 	firstname: 'Test',
 	lastname: 'Test',
 	password: 'foo',
+	role: UserRoleEnum.OFFICIAL,
 };
 
 const testUser2: CreateUserDto = {
@@ -19,6 +21,7 @@ const testUser2: CreateUserDto = {
 	firstname: 'Test',
 	lastname: 'Test',
 	password: 'foo',
+	role: UserRoleEnum.OFFICIAL,
 };
 
 describe('UserService', () => {
@@ -132,8 +135,7 @@ describe('UserService', () => {
 			const secondCreated = await service.create(testUser2);
 			createdIds.push(secondCreated._id);
 
-			const updated = testUser;
-			updated.username = testUser2.username;
+			const updated = { ...testUser, username: testUser2.username };
 			let result: UserDocument;
 			let error: any;
 

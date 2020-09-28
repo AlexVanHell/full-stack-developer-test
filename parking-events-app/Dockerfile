@@ -1,5 +1,8 @@
 FROM laraveldev/php
 
+RUN pecl install mongodb \
+    &&  echo "extension=mongo.so" > /usr/local/etc/php/conf.d/mongo.ini
+
 WORKDIR /app
 
 COPY ./parking-events-app/composer.json .
