@@ -76,6 +76,8 @@ export class VehicleController {
 		if (!vehicle) {
 			throw new ApiException(HttpStatus.NOT_FOUND, 'VEHICLE_NOT_FOUND');
 		}
+
+		return vehicle;
 	}
 
 	@Put('/:id([a-z0-9_-]+)')

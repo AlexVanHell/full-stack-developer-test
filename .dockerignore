@@ -1,0 +1,8 @@
+# Project dependency directories
+node_modules/
+**/node_modules/
+vendor/
+**/vendor/
+
+# Project env variables
+*/.env

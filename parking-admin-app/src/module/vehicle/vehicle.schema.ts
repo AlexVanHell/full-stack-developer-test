@@ -4,8 +4,18 @@ import { BaseDocument } from '../../common/document/base.document';
 import { UserDocument } from '../user/user.schema';
 import { VehicleTypeEnum } from './vehicle-type.enum';
 
+export interface VehicleInterface {
+	plates: string;
+	type: VehicleTypeEnum;
+	user: string;
+	modelName: string;
+	brand: string;
+	year: string;
+	color: string;
+}
+
 @Schema()
-export class VehicleDocument extends BaseDocument {
+export class VehicleDocument extends BaseDocument implements VehicleInterface {
 	@Prop({
 		unique: true,
 	})

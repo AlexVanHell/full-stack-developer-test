@@ -76,6 +76,13 @@ export class ConfigService {
 					url: processEnv['env_endpoints_events_app_url'],
 				},
 			},
+			adminUser: {
+				username: processEnv['env_admin_username'],
+				email: processEnv['env_admin_email'],
+				firstname: 'Admin',
+				lastname: 'Admin',
+				password: processEnv['env_admin_password'],
+			},
 		};
 	}
 

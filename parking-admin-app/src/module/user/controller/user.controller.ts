@@ -70,12 +70,37 @@ export class UserController {
 		statusCode: HttpStatus.NOT_FOUND,
 		code: 'USER_NOT_FOUND',
 	})
-	public async getByUsername(@Param('id') id: string) {
+	public async getById(@Param('id') id: string) {
 		const user = this.service.getById(id);
 
 		if (!user) {
 			throw new ApiException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND');
 		}
+
+		return user;
+	}
+
+	@Get('/auth/:username([a-z0-9_-]+)')
+	@ApiOperation({
+		summary: 'Get user by username',
+	})
+	@ApiResponse({
+		status: HttpStatus.OK,
+		description: 'User object',
+		type: UserDto,
+	})
+	@ApiExceptionResponse({
+		statusCode: HttpStatus.NOT_FOUND,
+		code: 'USER_NOT_FOUND',
+	})
+	public async getByUsername(@Param('username') username: string) {
+		const user = this.service.getByUsername(username);
+
+		if (!user) {
+			throw new ApiException(HttpStatus.NOT_FOUND, 'USER_NOT_FOUND');
+		}
+
+		return user;
 	}
 
 	@Put('/:id([a-z0-9_-]+)')

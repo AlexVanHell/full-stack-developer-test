@@ -11,7 +11,7 @@ import { AuthDto } from '../dto/auth.dto';
 @Injectable()
 export class AuthService {
 	private readonly adminApiUrl: string;
-	private readonly usersEndpoint = '/user/auth';
+	private readonly usersEndpoint = '/users/auth';
 
 	constructor(
 		configService: ConfigService,
@@ -73,6 +73,6 @@ export class AuthService {
 			accessToken,
 		};
 
-		return null;
+		return result;
 	}
 }

@@ -14,5 +14,6 @@ import { UserDocument, UserSchema } from './user.schema';
 			{ name: UserDocument.name, schema: UserSchema },
 		]),
 	],
+	exports: [UserService],
 })
 export class UserModule {}

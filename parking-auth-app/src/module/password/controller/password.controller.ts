@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpStatus } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PasswordService } from '../service/password.service';
 
@@ -7,7 +7,7 @@ import { PasswordService } from '../service/password.service';
 export class PasswordController {
 	constructor(private readonly service: PasswordService) {}
 
-	@Get('/generate')
+	@Post('/generate')
 	@ApiOperation({
 		summary: 'Generate hashed password',
 	})

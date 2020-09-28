@@ -1,8 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { BaseDocument } from '../../common/document/base.document';
 
+export interface UserInterface {
+	firstname: string;
+	lastname: string;
+	username: string;
+	email: string;
+	password: string;
+}
+
 @Schema()
-export class UserDocument extends BaseDocument {
+export class UserDocument extends BaseDocument implements UserInterface {
 	@Prop()
 	firstname: string;
 

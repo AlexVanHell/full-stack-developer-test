@@ -5,7 +5,6 @@ import {
 	ApiResponse,
 	ApiTags,
 } from '@nestjs/swagger';
-import { ApiException } from '../../../common/api-exception/api-exception';
 import { ApiExceptionResponse } from '../../../common/api-exception/api-exception-response.decorator';
 import { UserDto } from '../../user/dto/user.dto';
 import { AuthUser } from '../decorator/auth-user.decorator';
@@ -42,11 +41,7 @@ export class AuthController {
 		},
 	)
 	public async login(@AuthUser() user: UserDto) {
-		const auth = this.service.login(user);
-
-		if (!auth) {
-			throw new ApiException(HttpStatus.UNAUTHORIZED, 'USER_BAD_CREDENTIALS');
-		}
+		return this.service.login(user);
 	}
 
 	@Get('/validate')

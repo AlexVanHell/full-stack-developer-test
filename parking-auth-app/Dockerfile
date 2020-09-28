@@ -7,6 +7,8 @@ WORKDIR /app
 COPY ./parking-auth-app/package.json .
 COPY ./parking-auth-app/yarn.lock .
 
+RUN rm -rf ./node_modules/
+
 RUN yarn install
 
 COPY ./parking-auth-app .

@@ -1,8 +1,10 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import Axios from 'axios';
 import { Model } from 'mongoose';
 import { ApiException } from '../../../common/api-exception/api-exception';
 import { SimpleCrudService } from '../../../common/service/simple-crud.service';
+import { ConfigService } from '../../../config/service/config.service';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdateUserDto } from '../dto/update-user.dto';
 import { UserDocument } from '../user.schema';
@@ -12,13 +14,18 @@ export class UserService extends SimpleCrudService<UserDocument> {
 	constructor(
 		@InjectModel(UserDocument.name)
 		model: Model<UserDocument>,
+		private readonly configService: ConfigService,
 	) {
 		super(model);
 	}
 
 	public async create(data: CreateUserDto) {
 		await this.checkDuplicateUser(data.username, data.email);
-		return super.create(data);
+
+		// Encrypt password
+		const { hashed } = await this.getEncryptedPassword(data.password);
+
+		return super.create({ ...data, password: hashed });
 	}
 
 	public async updateById(id: string, data: UpdateUserDto) {
@@ -68,6 +75,26 @@ export class UserService extends SimpleCrudService<UserDocument> {
 
 		if (findWithEmail) {
 			throw new ApiException(HttpStatus.CONFLICT, 'USER_EMAIL_IN_USE');
+		}
+	}
+
+	private async getEncryptedPassword(
+		password: string,
+	): Promise<{ hashed: string }> {
+		try {
+			const response = await Axios.post(
+				`${
+					this.configService.get('endpoints')['auth-app'].url
+				}/password/generate`,
+				{ password },
+			);
+
+			return response.data;
+		} catch (err) {
+			throw new ApiException(
+				HttpStatus.BAD_GATEWAY,
+				'USER_PROBLEM_ENCRIPTING_PASSWORD',
+			);
 		}
 	}
 }

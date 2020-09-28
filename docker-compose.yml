@@ -5,6 +5,7 @@ volumes:
 
 networks:
   main:
+  database:
 
 services:
   database:
@@ -24,12 +25,17 @@ services:
       - mongo_data:/data/db/
       - ./.docker/mongodb/data/log/:/var/log/mongodb/
     # command: ['-f', '/etc/mongod.conf']
+    networks:
+      database:
+        aliases:
+          - database
   nginx:
     build: ./nginx
     container_name: parking-app-nginx
     ports:
       - 8000:80
     networks:
+      database:
       main:
         aliases:
           - nginx
@@ -39,14 +45,16 @@ services:
       dockerfile: ./parking-admin-app/Dockerfile
     container_name: parking-admin-app
     working_dir: /app
+    depends_on:
+      - database
+      - auth-app
     ports:
       - 3000:3000
     #    volumes:
     #      - ./parking-admin-app:/app
     #      - /app/node_modules
-    links:
-      - database
     networks:
+      database:
       main:
         aliases:
           - admin-app
@@ -79,9 +87,8 @@ services:
 #      - ./parking-events-app:/app
 #      - /app/vendor
 #      - /app/node_modules
-#    links:
-#      - database
 #    networks:
+#    database:
 #      main:
 #        aliases:
 #          - events-app
